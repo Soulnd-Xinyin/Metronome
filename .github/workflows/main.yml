@@ -3,7 +3,7 @@ name: Flutter Web Build To Github Page
 on:
   push:
     branches:
-      - main
+      - master
 jobs:
   build-and-deploy:
     # 表示运行在 ubuntu 最新版本的机器上
