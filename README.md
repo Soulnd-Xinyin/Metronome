@@ -1,16 +1,10 @@
-# metronome
+# soulnd - metronome
 
-An metronome app. Very good!
+A iOS style metronome app with many functions built with flutter. We made this app because we want to build an app which is easy to use and has full function that musicians need.
 
-## Getting Started
+These are our aims
+- iOS style appearance
+- less text while more photos
+- all functions that are musicians' need
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
