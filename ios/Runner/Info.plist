@@ -47,7 +47,15 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSCameraUsageDescription</key>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Need microphone access for uploading audio</string>
+    <key>NSCameraUsageDescription</key>
     <string>需要权限打开第一拍的闪光灯</string>
+    <key>NSLocationUsageDescription</key>
+    <string>Need location access for updating nearby friends</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>This app will use your location to show features near you.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Need photo library access for saving and uploading images</string>
 </dict>
 </plist>
