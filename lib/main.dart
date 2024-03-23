@@ -110,11 +110,11 @@ class MyApp extends StatelessWidget {
             },
           ),
           theme: CupertinoThemeData(
-            primaryColor: theme.color3Getter,
+            primaryColor: theme.color6Getter,
             textTheme: CupertinoTextThemeData(
               textStyle: TextStyle(
-                fontFamily: GoogleFonts.getFont('Noto Sans').fontFamily,
-                color: theme.color2Getter,
+                fontFamily: GoogleFonts.getFont('Open Sans').fontFamily,
+                color: theme.color6Getter,
               ),
             ),
           ),

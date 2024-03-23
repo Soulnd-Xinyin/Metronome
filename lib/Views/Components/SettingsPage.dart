@@ -199,9 +199,21 @@ class _SettingsPageState extends State<SettingsPage> {
                 }
               }
             ),
-
+CupertinoListSection.insetGrouped(
+              header: Text('语言', style: TextStyle(color: CupertinoColors.label),),
+              children: [
+                CupertinoListTile(
+                  title: Text('选择语言', style: TextStyle(color: CupertinoColors.label),),
+                  trailing: const CupertinoListTileChevron(),
+                  onTap: () {
+                    
+                  }
+                ),
+              ],
+            ),
           ],
         ),
+
       ),
     );
   }

@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:metronome/Views/Components/CustomRythmConstroller.dart';
@@ -14,7 +15,6 @@ import 'package:metronome/Views/Components/SpeedUpController.dart';
 import 'package:soundpool/soundpool.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:math';
-
 
 import 'Components/BackgroundLightButton.dart';
 import 'Components/BeatIndicator.dart';
@@ -38,10 +38,12 @@ int beats_per_bar = 4;
 class BeatBox extends StatefulWidget {
   var snapshot;
   var speedUpData;
-  BeatBox({Key? key, required this.snapshot, required this.speedUpData}) : super(key: key);
+  BeatBox({Key? key, required this.snapshot, required this.speedUpData})
+      : super(key: key);
 
   @override
-  _BeatBoxState createState() => _BeatBoxState(snapshot: snapshot, speedUpData: speedUpData);
+  _BeatBoxState createState() =>
+      _BeatBoxState(snapshot: snapshot, speedUpData: speedUpData);
 }
 
 class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
@@ -52,8 +54,6 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
   double _bpm = 120;
   bool _isPlaying = false;
   late ValueNotifier<double> _bpmListener;
-
-
 
   Soundpool pool = Soundpool(
     streamType: StreamType.notification,
@@ -70,7 +70,8 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
   ValueNotifier<bool> isPlayingListener = ValueNotifier(false);
   ValueNotifier<bool> isLightOn = ValueNotifier(false);
   ValueNotifier<bool> isImpactOn = ValueNotifier(false);
-  ValueNotifier<int> speed_type = ValueNotifier(0); // 0 for normal, 1 for speed up, 2 for slow down
+  ValueNotifier<int> speed_type =
+      ValueNotifier(0); // 0 for normal, 1 for speed up, 2 for slow down
   double speedUp = 1.2;
   ValueNotifier<bool> doesUserSetBackgroundLightOn = ValueNotifier(false);
   ValueNotifier<bool> isBackgroundActuallyLightOn = ValueNotifier(false);
@@ -81,13 +82,13 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
   bool _isCameraInitialized = false;
   bool _isCameraActuallyOn = false;
 
-  late CustomRythmConstroller customRythmConstroller = Get.put(CustomRythmConstroller());
+  late CustomRythmConstroller customRythmConstroller =
+      Get.put(CustomRythmConstroller());
 
   bool _hasGreeting = false;
 
   final SpeedUpController speedUpController = Get.put(SpeedUpController());
   final Theme theme = Get.put(Theme());
-
 
   void onNewCameraSelected(CameraDescription cameraDescription) async {
     final previousCameraController = controller;
@@ -146,13 +147,11 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
     }
   }
 
-
   @override
   void initState() {
     load(); // load audio resources
     beat_notifier = ValueNotifier(note_count);
-    if (cameras.isNotEmpty)
-      onNewCameraSelected(cameras[0]); // get camera
+    if (cameras.isNotEmpty) onNewCameraSelected(cameras[0]); // get camera
     // init custom rythm
     _bpmListener = ValueNotifier(_bpm);
     db = database;
@@ -177,9 +176,12 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
         note_type = snapshot.data?[length - 1]['note_type'];
         beats_per_bar = snapshot.data?[length - 1]['beats_per_bar'];
         var speedUp_length = speedUpData.length;
-        speedUpController.speedUp.value = speedUpData[speedUp_length - 1]['speedUp'];
-        speedUpController.speedUpType.value = (speedUpData[speedUp_length - 1]['speedUpType'] != 0);
-        speedUpController.speedUpInterval.value = (speedUpData[speedUp_length - 1]['speedUpInterval'] == 0);
+        speedUpController.speedUp.value =
+            speedUpData[speedUp_length - 1]['speedUp'];
+        speedUpController.speedUpType.value =
+            (speedUpData[speedUp_length - 1]['speedUpType'] != 0);
+        speedUpController.speedUpInterval.value =
+            (speedUpData[speedUp_length - 1]['speedUpInterval'] == 0);
       }
     }
     loadRythm();
@@ -187,10 +189,13 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
   }
 
   void load() async {
-    tickSoundId = await rootBundle.load("assets/ding.mp3").then((ByteData soundData) {
+    tickSoundId =
+        await rootBundle.load("assets/ding.mp3").then((ByteData soundData) {
       return pool.load(soundData);
     });
-    tackSoundId = await rootBundle.load("assets/metronome.mp3").then((ByteData soundData) {
+    tackSoundId = await rootBundle
+        .load("assets/metronome.mp3")
+        .then((ByteData soundData) {
       return pool.load(soundData);
     });
   }
@@ -230,14 +235,13 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
   late Database db;
   var customRythmController;
 
-
   @override
   Widget build(BuildContext context) {
     db = database;
 
-    restart = (){
+    restart = () {
       setState(() {
-        if (_isPlaying){
+        if (_isPlaying) {
           stopPlaying();
           startPlaying();
         }
@@ -245,7 +249,7 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
     };
 
     return CupertinoPageScaffold(
-      backgroundColor: theme.color1Getter,
+      backgroundColor: theme.color2Getter,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -253,216 +257,109 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
               valueListenable: isBackgroundActuallyLightOn,
               builder: (Context, value, child) {
                 return BackgroundLight(isStress, isBackgroundActuallyLightOn);
-              }
-          ),
+              }),
           Positioned(
-            right: 16.w,
+            right: 10.w,
             top: 100.h,
             child: Column(
+              
               children: [
                 LightButtonWidget(isLightOn),
                 ImpactButtonWidget(isImpactOn),
                 BackgroundLightButtonWidget(doesUserSetBackgroundLightOn),
                 CupertinoButton(
-                    child: ImageIcon(AssetImage('assets/languageIcon.png'), size: 28.sp),
-                    onPressed: (){}
+                  child: Icon(CupertinoIcons.settings, size: 28.sp),
+                  onPressed: () {
+                    Get.to(() => SettingsPage());
+                  },
                 ),
               ],
               mainAxisSize: MainAxisSize.min,
             ),
           ),
           Positioned(
-            left: 16.w,
+            left: 10.w,
             top: 100.h,
             child: Column(
               children: [
                 SpeedButton(speed_type), // 变速按钮
                 CupertinoButton(
                     child: Icon(CupertinoIcons.speedometer, size: 28.sp),
-                    onPressed: (){
-                      _showDialog(
-                          SpeedDetector() // 速度侦探
-                      );
-                    }
-                ),
+                    onPressed: () {
+                      _showDialog(SpeedDetector() // 速度侦探
+                          );
+                    }),
                 RythmButton(isCustomRythm: isCustomRythm),
-                CupertinoButton(
-                  child: Icon(CupertinoIcons.settings, size: 28.sp),
-                  onPressed: (){
-                    Get.to(() => SettingsPage());
-                  },
-                ),
+                
               ],
             ),
           ),
           Positioned(
               left: 16.w,
               bottom: 22.h,
-              child: Row(children: [
-                Icon(CupertinoIcons.clock, size: 28.sp),
-                SizedBox(width: 8.w,),
-                ValueListenableBuilder(
-                    valueListenable: _playingSeconds,
-                    builder: (context, value, child) {
-                      return Text('${(_playingSeconds.value/60).toInt()}:${_playingSeconds.value%60}', style: TextStyle(fontSize: 28.sp));
-                    }
-                ),
-              ],)
-          ),
+              child: Row(
+                children: [
+                  Icon(CupertinoIcons.clock, size: 28.sp),
+                  SizedBox(
+                    width: 8.w,
+                  ),
+                  ValueListenableBuilder(
+                      valueListenable: _playingSeconds,
+                      builder: (context, value, child) {
+                        return Text(
+                            '${(_playingSeconds.value / 60).toInt()}:${_playingSeconds.value % 60}',
+                            style: TextStyle(fontSize: 28.sp));
+                      }),
+                ],
+              )),
           Positioned(
               right: 16.w,
               bottom: 16.h,
-              child: CupertinoButton(child: Icon(CupertinoIcons.right_chevron, size: 28.sp), onPressed: (){
-                _showDialog(
-                    showBPMList()
-                );
-              },)
-
-          ),
+              child: CupertinoButton(
+                child: Icon(CupertinoIcons.right_chevron, size: 28.sp),
+                onPressed: () {
+                  _showDialog(showBPMList());
+                },
+              )),
           Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('BPM', style: TextStyle(fontSize: 16.sp, color: theme.color3Getter)),
-              Row(
-                children: [
-                  CupertinoButton(
-                    child: Icon(CupertinoIcons.minus_circle, size: 32.sp),
-                    onPressed: () {
-                      setState(() {
-                        _bpm -= 1;
-                        _bpmListener.value = _bpm;
-                        if (_isPlaying) {
-                          stopPlaying();
-                          startPlaying();
-                        }
-                      });
-                    },
-                  ),
-                  GestureDetector(
-                    child: Text(
-                        '${_bpm.toStringAsFixed(0)}',
-                        style: TextStyle(
-                          fontSize: 32.sp,
-
-                        )
-                    ),
-                    onVerticalDragUpdate: (details) {
-                      setState(() {
-                        if (_bpm - details.delta.dy > 0 && _bpm - details.delta.dy <= 266){
-                          _bpm -= details.delta.dy;
-                          _bpmListener.value = _bpm;
-                        }
-                        if (_isPlaying) {
-                          stopPlaying();
-                          startPlaying();
-                        }
-                      });
-                      HapticFeedback.selectionClick();
-                    },
-                  ),
-                  CupertinoButton(
-                    child: Icon(CupertinoIcons.add_circled, size: 32.sp),
-                    onPressed: () {
-                      setState(() {
-                        _bpm += 1;
-                        _bpmListener.value = _bpm;
-                        if (_isPlaying) {
-                          stopPlaying();
-                          startPlaying();
-                        }
-                      });
-                    },
-                  ),
-                ],
-                mainAxisAlignment: MainAxisAlignment.center,
-              ),
-              SizedBox(height: 20.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () => _showDialog(
-                      CupertinoPicker(
-                        magnification: 1.22,
-                        squeeze: 1.2,
-                        useMagnifier: true,
-                        itemExtent: 24.h,
-                        scrollController: FixedExtentScrollController(
-                            initialItem: beats_per_bar - 1
-                        ),
-                        onSelectedItemChanged: (int index) {
-                          setState(() {
-                            beats_per_bar = index + 1;
-                          });
-                          if (_isPlaying) {
-                            stopPlaying();
-                            startPlaying();
-                          }
-                          HapticFeedback.selectionClick();
-                        },
-                        children: List<Widget>.generate(16, (int index) {
-                          final int value = index + 1;
-                          return Center(
-                            child: Text(value.toString(), style: TextStyle(color: theme.color3Getter),),
-                          );
-                        }),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Text('分子', style: TextStyle(fontSize: 16.sp, color: theme.color3Getter)),
-                        Text('${beats_per_bar}', style: TextStyle(fontSize: 32.sp)),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 30.w),
-                  GestureDetector(
-                    onTap: () => _showDialog(
-                      CupertinoPicker(
-                        magnification: 1.22,
-                        squeeze: 1.2,
-                        useMagnifier: true,
-                        itemExtent: 24.h,
-                        scrollController: FixedExtentScrollController(
-                            initialItem: (log(note_type) / log(2)).round()-1
-                        ),
-                        onSelectedItemChanged: (int index) {
-                          setState(() {
-                            note_type = 2 << index;
-                          });
-                          if (_isPlaying) {
-                            stopPlaying();
-                            startPlaying();
-                          }
-                          HapticFeedback.selectionClick();
-                        },
-                        children: List<Widget>.generate(4, (int index) {
-                          final int value = 2 << index;
-                          return Center(
-                            child: Text(value.toString(), style: TextStyle(color: theme.color3Getter)),
-                          );
-                        }),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Text('分母', style: TextStyle(fontSize: 16.sp, color: theme.color3Getter)),
-                        Text('${note_type}', style: TextStyle(fontSize: 32.sp)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 210.h),
-              Metronome(durationListener, isPlayingListener, speed_type.value!=0, _bpmListener!),
+              SizedBox(height: 120.h),
+              box1(),
+              SizedBox(height: 15.h),
+              bpm(),
+              SizedBox(height: 35.h),
+              Text('Tap tempo or hold to enter tempo', style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500)),
+              SizedBox(height: 50.h),
+              // Metronome(durationListener, isPlayingListener,
+              //     speed_type.value != 0, _bpmListener!),
               SizedBox(height: 48.h),
-              BeatIndicator(beat_notifier!, beats_per_bar, _isPlaying),
+              // BeatIndicator(beat_notifier!, beats_per_bar, _isPlaying),
               SizedBox(height: 24.h),
               CupertinoButton(
                 color: theme.color4Getter,
-                child: Icon(!_isPlaying ? CupertinoIcons.play_arrow_solid : CupertinoIcons.stop_fill, size: 24, color: theme.color2Getter,),
+                child: Icon(
+                  !_isPlaying
+                      ? CupertinoIcons.play_arrow_solid
+                      : CupertinoIcons.stop_fill,
+                  size: 24,
+                  color: theme.color2Getter,
+                ),
                 onPressed: () async {
-                  await db.insert('basic', {'bpm': _bpm, 'beats_per_bar': beats_per_bar, 'note_type': note_type, 'date': DateTime.now().toString()});
-                  await db.insert('settings', {'speedUpType': boolToInt(speedUpController.speedUpType.value==0), 'speedUp': speedUpController.speedUp.value, 'speedUpInterval': boolToInt(speedUpController.speedUpInterval.value==0), 'date': DateTime.now().toString()});
+                  await db.insert('basic', {
+                    'bpm': _bpm,
+                    'beats_per_bar': beats_per_bar,
+                    'note_type': note_type,
+                    'date': DateTime.now().toString()
+                  });
+                  await db.insert('settings', {
+                    'speedUpType':
+                        boolToInt(speedUpController.speedUpType.value == 0),
+                    'speedUp': speedUpController.speedUp.value,
+                    'speedUpInterval':
+                        boolToInt(speedUpController.speedUpInterval.value == 0),
+                    'date': DateTime.now().toString()
+                  });
                   setState(() {
                     _isPlaying = !_isPlaying;
                   });
@@ -475,10 +372,242 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
                 },
               ),
             ],
-            mainAxisAlignment: MainAxisAlignment.center,
           ),
         ],
       ),
+    );
+  }
+
+  Widget bpm() {
+    return Container(
+      width: 330,
+      decoration: BoxDecoration(
+          border: Border.all(
+            // color: Color.fromARGB(255, 0, 0, 0), // 边框颜色
+            width: 2.0, // 边框宽度
+          ),
+          borderRadius: BorderRadius.circular(20)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CupertinoButton(
+            child: Icon(CupertinoIcons.minus, size: 35.sp),
+            padding: EdgeInsets.fromLTRB(0, 0, 25, 0),
+            onPressed: () {
+              setState(() {
+                _bpm -= 1;
+                _bpmListener.value = _bpm;
+                if (_isPlaying) {
+                  stopPlaying();
+                  startPlaying();
+                }
+              });
+            },
+          ),
+          GestureDetector(
+            child: Text('${_bpm.toStringAsFixed(0)}',
+                style: TextStyle(
+                  fontSize: 53.sp,
+                )),
+            onVerticalDragUpdate: (details) {
+              setState(() {
+                if (_bpm - details.delta.dy > 0 &&
+                    _bpm - details.delta.dy <= 266) {
+                  _bpm -= details.delta.dy;
+                  _bpmListener.value = _bpm;
+                }
+                if (_isPlaying) {
+                  stopPlaying();
+                  startPlaying();
+                }
+              });
+              HapticFeedback.selectionClick();
+            },
+          ),
+          CupertinoButton(
+            child: Icon(CupertinoIcons.add, size: 35.sp),
+            padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
+            onPressed: () {
+              setState(() {
+                _bpm += 1;
+                _bpmListener.value = _bpm;
+                if (_isPlaying) {
+                  stopPlaying();
+                  startPlaying();
+                }
+              });
+            },
+          ),
+        ],
+      ),
+      // 其他Container的内容
+    );
+  }
+
+  Widget jiajian1() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        CupertinoButton(
+            child: Icon(
+              CupertinoIcons.add,
+              color: theme.color5Getter,
+            ),
+            padding: EdgeInsets.fromLTRB(10, 40, 0, 0),
+            onPressed: () {
+              if (beats_per_bar == 16) return;
+              setState(() {
+                beats_per_bar++;
+              });
+
+              if (_isPlaying) {
+                stopPlaying();
+                startPlaying();
+              }
+              HapticFeedback.selectionClick();
+            }),
+        // 添加间距 // 添加间距
+        CupertinoButton(
+            child: Icon(
+              CupertinoIcons.minus,
+              color: theme.color5Getter,
+            ),
+            padding: EdgeInsets.fromLTRB(10, 0, 0, 30),
+            onPressed: () {
+              if (beats_per_bar == 1) return;
+              setState(() {
+                beats_per_bar--;
+              });
+
+              if (_isPlaying) {
+                stopPlaying();
+                startPlaying();
+              }
+              HapticFeedback.selectionClick();
+            }),
+      ],
+    );
+  }
+
+  Widget jiajian2() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        CupertinoButton(
+            child: Icon(
+              CupertinoIcons.add,
+              color: theme.color5Getter,
+            ),
+            padding: EdgeInsets.fromLTRB(0, 40, 10, 0),
+            onPressed: () {
+              if (note_type == 16) return;
+              setState(() {
+                note_type *= 2;
+              });
+
+              if (_isPlaying) {
+                stopPlaying();
+                startPlaying();
+              }
+              HapticFeedback.selectionClick();
+            }),
+        // 添加间距 // 添加间距
+        CupertinoButton(
+            child: Icon(
+              CupertinoIcons.minus,
+              color: theme.color5Getter,
+            ),
+            padding: EdgeInsets.fromLTRB(0, 0, 10, 30),
+            onPressed: () {
+              if (note_type == 2) return;
+              setState(() {
+                note_type = (note_type / 2).toInt();
+              });
+
+              if (_isPlaying) {
+                stopPlaying();
+                startPlaying();
+              }
+              HapticFeedback.selectionClick();
+            }),
+      ],
+    );
+  }
+
+  Widget box1() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        jiajian1(),
+        GestureDetector(
+          onTap: () => _showDialog(
+            CupertinoPicker(
+              magnification: 1.22,
+              squeeze: 1.2,
+              useMagnifier: true,
+              itemExtent: 24.h,
+              scrollController:
+                  FixedExtentScrollController(initialItem: beats_per_bar - 1),
+              onSelectedItemChanged: (int index) {
+                setState(() {
+                  beats_per_bar = index + 1;
+                });
+                if (_isPlaying) {
+                  stopPlaying();
+                  startPlaying();
+                }
+                HapticFeedback.selectionClick();
+              },
+              children: List<Widget>.generate(16, (int index) {
+                final int value = index + 1;
+                return Center(
+                  child: Text(
+                    value.toString(),
+                    style: TextStyle(color: theme.color3Getter),
+                  ),
+                );
+              }),
+            ),
+          ),
+          child: Text('${beats_per_bar}', style: TextStyle(fontSize: 40.sp)),
+        ),
+        SizedBox(
+          width: 20.w,
+          child: Text('/',
+              style: TextStyle(fontSize: 40.sp), textAlign: TextAlign.center),
+        ),
+        GestureDetector(
+          onTap: () => _showDialog(
+            CupertinoPicker(
+              magnification: 1.22,
+              squeeze: 1.2,
+              useMagnifier: true,
+              itemExtent: 24.h,
+              scrollController: FixedExtentScrollController(
+                  initialItem: (log(note_type) / log(2)).round() - 1),
+              onSelectedItemChanged: (int index) {
+                setState(() {
+                  note_type = 2 << index;
+                });
+                if (_isPlaying) {
+                  stopPlaying();
+                  startPlaying();
+                }
+                HapticFeedback.selectionClick();
+              },
+              children: List<Widget>.generate(4, (int index) {
+                final int value = 2 << index;
+                return Center(
+                  child: Text(value.toString(),
+                      style: TextStyle(color: theme.color3Getter)),
+                );
+              }),
+            ),
+          ),
+          child: Text('${note_type}', style: TextStyle(fontSize: 40.sp)),
+        ),
+        jiajian2()
+      ],
     );
   }
 
@@ -487,15 +616,15 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
   ValueNotifier<int>? beat_notifier; // beat
   int note_count = 0;
 
-  int boolToInt(bool value){
-    if (value){
+  int boolToInt(bool value) {
+    if (value) {
       return 1;
     }
     return 0;
   }
 
-  void showPlayingGrettings(){
-    switch (_playingSeconds.value){
+  void showPlayingGrettings() {
+    switch (_playingSeconds.value) {
       case 60:
         Fluttertoast.showToast(
             msg: "你已经练习一分钟了，加油！",
@@ -503,8 +632,7 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             textColor: CupertinoColors.white,
-            fontSize: 16.0.sp
-        );
+            fontSize: 16.0.sp);
         break;
 
       case 300:
@@ -514,8 +642,7 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             textColor: CupertinoColors.white,
-            fontSize: 16.0.sp
-        );
+            fontSize: 16.0.sp);
         break;
 
       case 600:
@@ -525,8 +652,7 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             textColor: CupertinoColors.white,
-            fontSize: 16.0.sp
-        );
+            fontSize: 16.0.sp);
         break;
 
       case 1800:
@@ -536,8 +662,7 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             textColor: CupertinoColors.white,
-            fontSize: 16.0.sp
-        );
+            fontSize: 16.0.sp);
         break;
 
       case 3600:
@@ -547,17 +672,15 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             textColor: CupertinoColors.white,
-            fontSize: 16.0.sp
-        );
+            fontSize: 16.0.sp);
         break;
 
       default:
         break;
-
     }
   }
 
-  void showDailyGreetings(){
+  void showDailyGreetings() {
     DateTime now = DateTime.now();
     if (now.hour < 6) {
       Fluttertoast.showToast(
@@ -566,8 +689,7 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           textColor: CupertinoColors.white,
-          fontSize: 16.0.sp
-      );
+          fontSize: 16.0.sp);
     } else if (now.hour < 9) {
       Fluttertoast.showToast(
           msg: "早上好，一日之际在于晨",
@@ -575,8 +697,7 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           textColor: CupertinoColors.white,
-          fontSize: 16.0.sp
-      );
+          fontSize: 16.0.sp);
     } else if (now.hour < 12) {
       Fluttertoast.showToast(
           msg: "上午好，祝你练琴有个好心情",
@@ -584,8 +705,7 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           textColor: CupertinoColors.white,
-          fontSize: 16.0.sp
-      );
+          fontSize: 16.0.sp);
     } else if (now.hour < 14) {
       Fluttertoast.showToast(
           msg: "中午好，祝你的心情像阳光一样灿烂",
@@ -593,8 +713,7 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           textColor: CupertinoColors.white,
-          fontSize: 16.0.sp
-      );
+          fontSize: 16.0.sp);
     } else if (now.hour < 17) {
       Fluttertoast.showToast(
           msg: "下午好，练琴愉快",
@@ -602,8 +721,7 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           textColor: CupertinoColors.white,
-          fontSize: 16.0.sp
-      );
+          fontSize: 16.0.sp);
     } else if (now.hour < 19) {
       Fluttertoast.showToast(
           msg: "傍晚好，祝你练琴像晚霞一样开心",
@@ -611,8 +729,7 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           textColor: CupertinoColors.white,
-          fontSize: 16.0.sp
-      );
+          fontSize: 16.0.sp);
     } else if (now.hour < 22) {
       Fluttertoast.showToast(
           msg: "晚上好，为坚持练琴的你感动",
@@ -620,8 +737,7 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           textColor: CupertinoColors.white,
-          fontSize: 16.0.sp
-      );
+          fontSize: 16.0.sp);
     } else {
       Fluttertoast.showToast(
           msg: "夜深了，注意休息",
@@ -629,8 +745,7 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           textColor: CupertinoColors.white,
-          fontSize: 16.0.sp
-      );
+          fontSize: 16.0.sp);
     }
   }
 
@@ -639,37 +754,38 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
     beat_notifier?.value = -1;
     // calculate delay based on BPM, and the delay is of 16th note
     isPlayingListener.value = true;
-    durationListener.value = ((60 / _bpm) * 1000 / (32 / note_type)).round() * (32 / note_type).toInt();
+    durationListener.value = ((60 / _bpm) * 1000 / (32 / note_type)).round() *
+        (32 / note_type).toInt();
     createTimer();
-    if (!_hasGreeting){
+    if (!_hasGreeting) {
       showDailyGreetings();
       _hasGreeting = true;
     }
     _secondsTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_isPlaying) {
-        _playingSeconds.value++ ;
+        _playingSeconds.value++;
         showPlayingGrettings();
       }
     });
   }
 
-  void createTimer(){
-    final delay = Duration(milliseconds: ((60 / _bpm.toInt()) * 1000 / (32 / note_type)).round());
+  void createTimer() {
+    final delay = Duration(
+        milliseconds: ((60 / _bpm.toInt()) * 1000 / (32 / note_type)).round());
     _timer = Timer.periodic(delay, (timer) {
       // 强弱弱弱
       if ((beat_count_32th) % (32 / note_type) == 0) {
         if (note_count % beats_per_bar == 0) {
           // strong
           note_count = 0;
-          if (!isCustomRythm.value)
-            pool.play(tickSoundId);
-          if (isLightOn.value){
+          if (!isCustomRythm.value) pool.play(tickSoundId);
+          if (isLightOn.value) {
             if (controller != null) {
               controller?.setFlashMode(FlashMode.torch);
               _isCameraActuallyOn = true;
             } else {
               print('camera is null');
-              isLightOn.value =false;
+              isLightOn.value = false;
               _isCameraActuallyOn = false;
             }
           }
@@ -678,9 +794,9 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
           }
           isStress.value = true;
           // if the user intend to change the speed per bar
-          if (speedUpController.speedUpInterval.value){
-            if (beat_count_32th != 0){
-              switch(speed_type.value){
+          if (speedUpController.speedUpInterval.value) {
+            if (beat_count_32th != 0) {
+              switch (speed_type.value) {
                 case 0:
                   break;
                 case 1:
@@ -690,7 +806,9 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
                   });
                   timer.cancel();
                   createTimer();
-                  durationListener.value = ((60 / _bpm) * 1000 / (32 / note_type)).round() * (32 / note_type).toInt();
+                  durationListener.value =
+                      ((60 / _bpm) * 1000 / (32 / note_type)).round() *
+                          (32 / note_type).toInt();
                   break;
                 case 2:
                   setState(() {
@@ -699,16 +817,17 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
                   });
                   timer.cancel();
                   createTimer();
-                  durationListener.value = ((60 / _bpm.toInt()) * 1000 / (32 / note_type)).round() * (32 / note_type).toInt();
+                  durationListener.value =
+                      ((60 / _bpm.toInt()) * 1000 / (32 / note_type)).round() *
+                          (32 / note_type).toInt();
                   break;
               }
             }
           }
         } else {
           // weak
-          if (!isCustomRythm.value)
-            pool.play(tackSoundId);
-          if (_isCameraActuallyOn){
+          if (!isCustomRythm.value) pool.play(tackSoundId);
+          if (_isCameraActuallyOn) {
             _isCameraActuallyOn = false;
             controller?.setFlashMode(FlashMode.off);
           }
@@ -718,9 +837,9 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
         beat_notifier?.value = note_count - 1;
 
         // if the user intend to change the speed per beat
-        if (speedUpController.speedUpInterval.value == false){
-          if (beat_count_32th != 0){
-            switch(speed_type.value){
+        if (speedUpController.speedUpInterval.value == false) {
+          if (beat_count_32th != 0) {
+            switch (speed_type.value) {
               case 0:
                 break;
               case 1:
@@ -730,7 +849,9 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
                 });
                 timer.cancel();
                 createTimer();
-                durationListener.value = ((60 / _bpm) * 1000 / (32 / note_type)).round() * (32 / note_type).toInt();
+                durationListener.value =
+                    ((60 / _bpm) * 1000 / (32 / note_type)).round() *
+                        (32 / note_type).toInt();
                 break;
               case 2:
                 setState(() {
@@ -739,7 +860,9 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
                 });
                 timer.cancel();
                 createTimer();
-                durationListener.value = ((60 / _bpm.toInt()) * 1000 / (32 / note_type)).round() * (32 / note_type).toInt();
+                durationListener.value =
+                    ((60 / _bpm.toInt()) * 1000 / (32 / note_type)).round() *
+                        (32 / note_type).toInt();
                 break;
             }
           }
@@ -754,18 +877,17 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
         isBackgroundActuallyLightOn.value = false;
       }
 
-      if (isCustomRythm.value){
-        if (customRythmConstroller.checkIfStressRythm((beat_count_32th%(32/note_type * beats_per_bar)).toInt())){
+      if (isCustomRythm.value) {
+        if (customRythmConstroller.checkIfStressRythm(
+            (beat_count_32th % (32 / note_type * beats_per_bar)).toInt())) {
           pool.play(tickSoundId);
         }
-        if (customRythmConstroller.checkIfWeakRythm((beat_count_32th%(32/note_type * beats_per_bar)).toInt())){
+        if (customRythmConstroller.checkIfWeakRythm(
+            (beat_count_32th % (32 / note_type * beats_per_bar)).toInt())) {
           pool.play(tackSoundId);
         }
       }
-    }
-
-
-    );
+    });
   }
 
   void stopPlaying() {
@@ -777,51 +899,65 @@ class _BeatBoxState extends State<BeatBox> with WidgetsBindingObserver {
     note_count = 0;
   }
 
-  Future<List<Map<String, dynamic>>> getBPMList(){
+  Future<List<Map<String, dynamic>>> getBPMList() {
     return db.query('basic');
   }
 
-  Widget showBPMList(){
+  Widget showBPMList() {
     return FutureBuilder(
-      future: getBPMList(),
-      builder: (context, snapshot){
-        if (snapshot.hasError) {
-          print(snapshot.error);
-          return CupertinoPageScaffold(child: CupertinoActivityIndicator(), backgroundColor: theme.color1,);
-        } else if (snapshot.hasData){
-          return CupertinoPicker(
-            magnification: 1.22,
-            squeeze: 1.2,
-            useMagnifier: true,
-            itemExtent: 24.h,
-            scrollController: FixedExtentScrollController(
+        future: getBPMList(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            print(snapshot.error);
+            return CupertinoPageScaffold(
+              child: CupertinoActivityIndicator(),
+              backgroundColor: theme.color1,
+            );
+          } else if (snapshot.hasData) {
+            return CupertinoPicker(
+              magnification: 1.22,
+              squeeze: 1.2,
+              useMagnifier: true,
+              itemExtent: 24.h,
+              scrollController: FixedExtentScrollController(
                 initialItem: snapshot.data!.length - 1,
-            ),
-            onSelectedItemChanged: (int index) {
-              setState(() {
-                _bpm = snapshot.data?[index]['bpm'].toDouble();
-                _bpmListener.value = _bpm;
-                note_type = snapshot.data?[index]['note_type'];
-                beats_per_bar = snapshot.data?[index]['beats_per_bar'];
-              });
-              if (_isPlaying) {
-                stopPlaying();
-                startPlaying();
-              }
-              HapticFeedback.selectionClick();
-            },
-            children: List<Widget>.generate(snapshot.data!.length, (int index) {
-              String text = "BPM: " + snapshot.data![index]['bpm'].round().toString() + "  " + snapshot.data![index]['beats_per_bar'].toString() + "/"  + snapshot.data![index]['note_type'].toString();
-              return Center(
-                child: Text(text, style: TextStyle(color: theme.color3Getter),),
-              );
-            }),
-          );
-        } else {
-          return CupertinoPageScaffold(child: CupertinoActivityIndicator(), backgroundColor: theme.color1,);
-        }
-      }
-    );
+              ),
+              onSelectedItemChanged: (int index) {
+                setState(() {
+                  _bpm = snapshot.data?[index]['bpm'].toDouble();
+                  _bpmListener.value = _bpm;
+                  note_type = snapshot.data?[index]['note_type'];
+                  beats_per_bar = snapshot.data?[index]['beats_per_bar'];
+                });
+                if (_isPlaying) {
+                  stopPlaying();
+                  startPlaying();
+                }
+                HapticFeedback.selectionClick();
+              },
+              children:
+                  List<Widget>.generate(snapshot.data!.length, (int index) {
+                String text = "BPM: " +
+                    snapshot.data![index]['bpm'].round().toString() +
+                    "  " +
+                    snapshot.data![index]['beats_per_bar'].toString() +
+                    "/" +
+                    snapshot.data![index]['note_type'].toString();
+                return Center(
+                  child: Text(
+                    text,
+                    style: TextStyle(color: theme.color3Getter),
+                  ),
+                );
+              }),
+            );
+          } else {
+            return CupertinoPageScaffold(
+              child: CupertinoActivityIndicator(),
+              backgroundColor: theme.color1,
+            );
+          }
+        });
   }
 
   @override
